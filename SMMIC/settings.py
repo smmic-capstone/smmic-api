@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import datetime, timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,6 +52,15 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 ]
 
+REST_FRAMEWORK={
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
 DJOSER = {
     "LOGIN_FIELD" : "email",
     "USER_CREATE_PASSWORD_RETYPE" : True,
@@ -71,6 +81,9 @@ DJOSER = {
 }
 
 SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(hours =3),
+    'BLACKLIST_AFTER_ROTATION': True,
     'USER_ID_FIELD': 'UID',
     'USER_ID_CLAIM': 'user_id',
 }
@@ -140,6 +153,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 LANGUAGE_CODE = 'en-us'
 

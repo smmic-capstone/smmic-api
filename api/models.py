@@ -50,7 +50,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     zip_code = models.CharField(max_length=4)
     email=models.EmailField(max_length=255,unique=True)
     password=models.CharField(max_length=288)
-    #profilepic = models.ImageField(upload_to='profile_pictures', default='default.png')
+    profilepic = models.ImageField(upload_to='profile_pictures', default='default.png')
 
 
 
