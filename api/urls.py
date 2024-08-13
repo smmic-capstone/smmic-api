@@ -6,5 +6,9 @@ from rest_framework_simplejwt.views import TokenRefreshView
 urlpatterns =[
     path('djoser/',include('djoser.urls')),
     path('auth/',include('djoser.urls.jwt')),
+    path('updateuserdetails/<str:pk>',views.UpdateUserDetailsView.as_view(),name='updateuserdetails'),
+    path('getuserSKdevices/<str:pk>',views.GetUserSKDeviceView.as_view(),name='userSKDevices'),
+    path('updateuserSKdevicesname/<str:pk>',views.UpdateSKNameView.as_view(),name='updateSKname'),
+    path('updateuserSNdevicesname/<str:pk>',views.UpdateSNNameView.as_view(),name='updateSNname'),
     path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist')
 ]
