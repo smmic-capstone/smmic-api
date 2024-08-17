@@ -46,6 +46,22 @@ class UpdateSNNameSerializer(serializers.ModelSerializer):
         fields = ['SensorNode_Name',]
 
 
+#Readings
+class GetSKReadingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SKReadings
+        fields = ['battery_level','timestamp',]
+
+class GetSNReadingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SNReadings
+        fields = ['battery_level','timestamp','soil_moisture','temperature','humidity',]
+
+class TestingforRaspiSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ['first_name',]
+
 
 
  

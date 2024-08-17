@@ -10,5 +10,8 @@ urlpatterns =[
     path('getuserSKdevices/<str:pk>',views.GetUserSKDeviceView.as_view(),name='userSKDevices'),
     path('updateuserSKdevicesname/<str:pk>',views.UpdateSKNameView.as_view(),name='updateSKname'),
     path('updateuserSNdevicesname/<str:pk>',views.UpdateSNNameView.as_view(),name='updateSNname'),
+    path('getSKreadings/',views.GetSKReadingsViews.as_view(),name='getSKreadings'),
+    path('getSNreadings/',views.GetSNReadingsView.as_view(),name='getSNreadings'),
+    path('raspiTesting/',views.TestingforRaspiViews.as_view(),name='raspiTesting'),
     path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist')
 ]
