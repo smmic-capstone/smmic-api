@@ -5,11 +5,12 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from .models import *
 from.serializers import *
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 #BlackList and Refresh Token
 class LogoutAndBlacklistRefreshTokenForUserView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,) 
     authentication_classes = ()
 
     def post(self, request):
@@ -23,7 +24,7 @@ class LogoutAndBlacklistRefreshTokenForUserView(APIView):
 
 #User Update Details
 class UpdateUserDetailsView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,) #Debug
 
     def put(self,request,pk):
         data = request.data
@@ -48,7 +49,7 @@ class GetUserSKDeviceView(APIView):
     
 #Update Sink Node Name
 class UpdateSKNameView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,) #Debug
 
     def patch(self,request,pk):
         data = request.data
@@ -62,7 +63,7 @@ class UpdateSKNameView(APIView):
 
 #Update Sensor Node Name
 class UpdateSNNameView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,) #Debug
 
     def patch(self,request,pk):
         data = request.data
@@ -74,6 +75,56 @@ class UpdateSNNameView(APIView):
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
+#Readings Views
+class GetSKReadingsViews(APIView):
+    permission_classes = (permissions.AllowAny,) #Debug
+
+    def get(self,request):
+        sink_node_id = request.headers.get('Sink')
+
+        print(f"Received SinkNode_ID: {request.headers.get('Sink')}")
+
+        if not sink_node_id:
+            return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        sink_node = get_object_or_404(SinkNode,SKID = sink_node_id)
+        readings = SKReadings.objects.filter(Sink_Node = sink_node).order_by('-timestamp')
+
+        serializer = GetSKReadingsSerializer(readings,many = True)
+        return Response(serializer.data)
+    
+class GetSNReadingsView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self,request):
+        sensor_node_id = request.headers.get('Sensor')
+
+        if not sensor_node_id:
+            return Response({'error':'Sensor Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        sensor_node = get_object_or_404(SensorNode,SNID = sensor_node_id)
+        readings = SNReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')
+
+        serializer = GetSNReadingsSerializer(readings, many=True)
+        return Response(serializer.data)
 
 
+        
+#Testing for Raspi
+
+class TestingforRaspiViews(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self,request):
+        user_id = request.headers.get('UID')
+
+        print(user_id)
+
+        if not user_id:
+            return Response({'error':'User ID is required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        user = CustomUser.objects.get(UID = user_id)
+        serializer = TestingforRaspiSerializer(user)
+
+        return Response(serializer.data)
         
