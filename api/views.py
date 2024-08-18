@@ -26,10 +26,16 @@ class LogoutAndBlacklistRefreshTokenForUserView(APIView):
 class UpdateUserDetailsView(APIView):
     permission_classes = (permissions.AllowAny,) #Debug
 
-    def put(self,request,pk):
+    def put(self,request):
         data = request.data
-        userID = CustomUser.objects.get(UID = pk)
-        serializer = UpdateUserDetailsSerializer(instance = userID, data = data)
+        userID = request.headers.get('UID')
+
+        if not userID:
+            return Response({'error':'UID is required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        user = CustomUser.objects.get(UID = userID)
+        serializer = UpdateUserDetailsSerializer(user, data=data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -41,20 +47,33 @@ class UpdateUserDetailsView(APIView):
 class GetUserSKDeviceView(APIView):
     permission_classes = (permissions.AllowAny,) #debug
     
-    def get(self,request,pk):
-        userID = CustomUser.objects.get(UID = pk)
-        userSKDevice = SinkNode.objects.filter(User = userID).prefetch_related('sensor_nodes')
+    def get(self,request):
+        userID = request.headers.get('UID')
+
+        if not userID:
+            return Response({'error':'UID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = CustomUser.objects.get(UID = userID)
+
+        userSKDevice = SinkNode.objects.filter(User = user).prefetch_related('sensor_nodes')
         serializer = GetUserSKDeviceSerializer(userSKDevice, many=True)
+
         return Response(serializer.data)
     
 #Update Sink Node Name
 class UpdateSKNameView(APIView):
     permission_classes = (permissions.AllowAny,) #Debug
 
-    def patch(self,request,pk):
+    def patch(self,request):
         data = request.data
-        SK_ID = SinkNode.objects.get(SKID = pk)
-        serializer = UpdateSKNameSerializer(instance = SK_ID, data=data)
+        SK_ID = request.headers.get('Sink')
+
+        if not SK_ID:
+            return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        Sink_Node = SinkNode.objects.get(SKID = SK_ID)
+        serializer = UpdateSKNameSerializer(Sink_Node, data=data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -65,10 +84,16 @@ class UpdateSKNameView(APIView):
 class UpdateSNNameView(APIView):
     permission_classes = (permissions.AllowAny,) #Debug
 
-    def patch(self,request,pk):
+    def patch(self,request):
         data = request.data
-        SN_ID = SensorNode.objects.get(SNID = pk)
-        serializer = UpdateSNNameSerializer(instance = SN_ID, data = data)
+        SN_ID = request.headers.get('Sensor')
+
+        if not SN_ID:
+            return Response({'error':'Sensor Node ID required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        sensor_node = SensorNode.objects.get(SNID = SN_ID)
+        serializer = UpdateSNNameSerializer(sensor_node, data = data)
+
         if serializer.is_valid():
             serializer.save()
             return  Response(serializer.data)
