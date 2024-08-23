@@ -116,12 +116,12 @@ class SensorNode(models.Model):
 class SKReadings(models.Model):
      Sink_Node = models.ForeignKey(SinkNode,on_delete=models.CASCADE)
      battery_level = models.DecimalField(max_digits=10, decimal_places=7)
-     timestamp = models.DateTimeField()
+     timestamp = models.DateTimeField(auto_now_add=True)
 
 class SNReadings(models.Model):
      Sensor_Node = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
      battery_level = models.DecimalField(max_digits=10, decimal_places=7)
-     timestamp = models.DateTimeField()
+     timestamp = models.DateTimeField(auto_now_add=True)
      soil_moisture = models.DecimalField(max_digits=10, decimal_places=7)
      temperature = models.DecimalField(max_digits=10, decimal_places=7)
      humidity = models.DecimalField(max_digits=10, decimal_places=7)

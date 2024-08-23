@@ -100,7 +100,40 @@ class UpdateSNNameView(APIView):
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-#Readings Views
+#Get Only  One Reading Views
+class GetSKReadingViews(APIView):
+    permission_classes = (permissions.AllowAny,) #Debug
+
+    def get(self,request):
+        sink_node_id = request.headers.get('Sink')
+
+        print(f"Received SinkNode_ID: {request.headers.get('Sink')}")
+
+        if not sink_node_id:
+            return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        sink_node = get_object_or_404(SinkNode,SKID = sink_node_id)
+        readings = SKReadings.objects.filter(Sink_Node = sink_node).order_by('-timestamp')[:1]
+
+        serializer = GetSKReadingsSerializer(readings,many = True)
+        return Response(serializer.data)
+
+#Get 15 Latest Readings Views
+class GetSNReadingView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self,request):
+        sensor_node_id = request.headers.get('Sensor')
+
+        if not sensor_node_id:
+            return Response({'error':'Sensor Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
+        
+        sensor_node = get_object_or_404(SensorNode,SNID = sensor_node_id)
+        readings = SNReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:1]
+
+        serializer = GetSNReadingsSerializer(readings, many=True)
+        return Response(serializer.data)
+    
 class GetSKReadingsViews(APIView):
     permission_classes = (permissions.AllowAny,) #Debug
 
@@ -113,7 +146,7 @@ class GetSKReadingsViews(APIView):
             return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
         sink_node = get_object_or_404(SinkNode,SKID = sink_node_id)
-        readings = SKReadings.objects.filter(Sink_Node = sink_node).order_by('-timestamp')
+        readings = SKReadings.objects.filter(Sink_Node = sink_node).order_by('-timestamp')[:15]
 
         serializer = GetSKReadingsSerializer(readings,many = True)
         return Response(serializer.data)
@@ -128,12 +161,42 @@ class GetSNReadingsView(APIView):
             return Response({'error':'Sensor Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
         sensor_node = get_object_or_404(SensorNode,SNID = sensor_node_id)
-        readings = SNReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')
+        readings = SNReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:15]
 
         serializer = GetSNReadingsSerializer(readings, many=True)
         return Response(serializer.data)
 
+class CreateSKReadingsView(APIView):
+    permission_classes = (permissions.AllowAny,)
 
+    def post(self,request):
+        data = request.data
+        serializer = CreateSKReadingsSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({**serializer.data},status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+class CreateSNReadingsView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self,request):
+        data = request.data
+        serializer = CreateSNReadingsSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({**serializer.data},status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+#kuha ug latest nga isa kabook
+#kuha ug data from latest to 15th nga latest
+#butang ug post data nila SK ug Sensor
         
 #Testing for Raspi
 

@@ -10,8 +10,12 @@ urlpatterns =[
     path('getuserSKdevices/',views.GetUserSKDeviceView.as_view(),name='userSKDevices'),
     path('updateuserSKdevicesname/',views.UpdateSKNameView.as_view(),name='updateSKname'),
     path('updateuserSNdevicesname/',views.UpdateSNNameView.as_view(),name='updateSNname'),
+    path('getSKreading/',views.GetSKReadingViews.as_view(),name='getSKreadings'),
+    path('getSNreading/',views.GetSNReadingView.as_view(),name='getSNreadings'),
     path('getSKreadings/',views.GetSKReadingsViews.as_view(),name='getSKreadings'),
     path('getSNreadings/',views.GetSNReadingsView.as_view(),name='getSNreadings'),
+    path('createSNreadings/',views.CreateSNReadingsView.as_view(),name='createSNreadings'),
+    path('createSKreadings/',views.CreateSKReadingsView.as_view(),name='createSKreadings'),
     path('raspiTesting/',views.TestingforRaspiViews.as_view(),name='raspiTesting'),
     path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist')
 ]
