@@ -57,6 +57,16 @@ class GetSNReadingsSerializer(serializers.ModelSerializer):
         model = SNReadings
         fields = ['battery_level','timestamp','soil_moisture','temperature','humidity',]
 
+class CreateSNReadingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SNReadings
+        fields =  '__all__'
+
+class CreateSKReadingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SKReadings
+        fields = '__all__'
+
 class TestingforRaspiSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
