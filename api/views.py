@@ -24,7 +24,7 @@ class LogoutAndBlacklistRefreshTokenForUserView(APIView):
 
 #User Update Details
 class UpdateUserDetailsView(APIView):
-    permission_classes = (permissions.AllowAny,) #Debug
+    permission_classes = (permissions.IsAuthenticated,) #Debug
 
     def put(self,request):
         data = request.data

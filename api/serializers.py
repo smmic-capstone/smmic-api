@@ -19,7 +19,7 @@ class CustomUserSerializer(UserSerializer):
 class UpdateUserDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ['first_name',] #temporary first_name only for testing purposes
+        fields = ['first_name','last_name','province','city','barangay','zone','zip_code', 'email','password','profilepic'] #temporary first_name only for testing purposes
 
 #Get All Devices
 class GetUserSNDeviceSerializer(serializers.ModelSerializer):
