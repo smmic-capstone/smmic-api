@@ -37,7 +37,8 @@ CORS_ALLOW_HEADERS = [
     'authorization',
     'X-CSRFToken',
     'uid',
-    ]
+    'sink'
+]
 
 AUTH_USER_MODEL = "api.CustomUser"
 # Application definition
