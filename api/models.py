@@ -71,6 +71,8 @@ class SinkNode(models.Model):
     increment_id = models.IntegerField(editable=False, unique=True)  # Custom auto-increment field
     User = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     area_address = models.TextField()
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
     created_at = models.DateTimeField(auto_now_add=True)
 
     #For adding numbers if devcice has no name

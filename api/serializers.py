@@ -25,25 +25,25 @@ class UpdateUserDetailsSerializer(serializers.ModelSerializer):
 class GetUserSNDeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorNode
-        fields = ["SNID","SensorNode_Name",]
+        fields = ["SNID","SensorNode_Name","latitude","longitude"]
         
 class GetUserSKDeviceSerializer(serializers.ModelSerializer):
     sensor_nodes = GetUserSNDeviceSerializer(many=True,read_only=True)
 
     class Meta:
         model = SinkNode
-        fields = ["SKID","SK_Name","sensor_nodes",]
+        fields = ["SKID","SK_Name","sensor_nodes","latitude","longitude"]
 
 #Update Device Name
 class UpdateSKNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = SinkNode
-        fields= ['SK_Name',]
+        fields= ['SK_Name',"latitude","longitude"]
 
 class UpdateSNNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorNode
-        fields = ['SensorNode_Name',]
+        fields = ['SensorNode_Name',"latitude","longitude"]
 
 
 #Readings
