@@ -37,7 +37,8 @@ CORS_ALLOW_HEADERS = [
     'authorization',
     'X-CSRFToken',
     'uid',
-    'sink'
+    'sink',
+    'sensor'
 ]
 
 AUTH_USER_MODEL = "api.CustomUser"
