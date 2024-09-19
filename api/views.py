@@ -183,16 +183,15 @@ class CreateSKReadingsView(APIView):
 class CreateSensorReadingsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def post(self,request):
+    def post(self, request):
+        sensor_type = request.data.get('SensorType')
         data = request.data
         serializer : Any | None = None
-        sensor_type = request.headers.get('SensorType')
-
-        print(sensor_type)
 
         if sensor_type == 'soil_moisture':
-            print('hhehehehehehehe')
             serializer = CreateSMReadingsSerializer(data = data)
+        else:
+            return Response(data=f"Unregistered sensor type: {request.data}", status=status.HTTP_400_BAD_REQUEST)
 
         if serializer:
             if serializer.is_valid():
