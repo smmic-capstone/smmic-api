@@ -52,14 +52,14 @@ class GetSKReadingsSerializer(serializers.ModelSerializer):
         model = SKReadings
         fields = ['battery_level','timestamp',]
 
-class GetSNReadingsSerializer(serializers.ModelSerializer):
+class GetSMReadingsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SNReadings
+        model = SMSensorReadings
         fields = ['battery_level','timestamp','soil_moisture','temperature','humidity',]
 
-class CreateSNReadingsSerializer(serializers.ModelSerializer):
+class CreateSMReadingsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SNReadings
+        model = SMSensorReadings
         fields =  '__all__'
 
 class CreateSKReadingsSerializer(serializers.ModelSerializer):
