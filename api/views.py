@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .models import *
 from.serializers import *
 from django.shortcuts import get_object_or_404
+from typing import Any
 # Create your views here.
 
 #BlackList and Refresh Token
@@ -129,9 +130,9 @@ class GetSNReadingView(APIView):
             return Response({'error':'Sensor Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
         sensor_node = get_object_or_404(SensorNode,SNID = sensor_node_id)
-        readings = SNReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:1]
+        readings = SMSensorReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:1]
 
-        serializer = GetSNReadingsSerializer(readings, many=True)
+        serializer = GetSMReadingsSerializer(readings, many=True)
         return Response(serializer.data)
     
 class GetSKReadingsViews(APIView):
@@ -151,7 +152,7 @@ class GetSKReadingsViews(APIView):
         serializer = GetSKReadingsSerializer(readings,many = True)
         return Response(serializer.data)
     
-class GetSNReadingsView(APIView):
+class GetSMReadingsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self,request):
@@ -161,9 +162,9 @@ class GetSNReadingsView(APIView):
             return Response({'error':'Sensor Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
         sensor_node = get_object_or_404(SensorNode,SNID = sensor_node_id)
-        readings = SNReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:15]
+        readings = SMSensorReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:15]
 
-        serializer = GetSNReadingsSerializer(readings, many=True)
+        serializer = GetSMReadingsSerializer(readings, many=True)
         return Response(serializer.data)
 
 class CreateSKReadingsView(APIView):
@@ -179,18 +180,26 @@ class CreateSKReadingsView(APIView):
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-class CreateSNReadingsView(APIView):
+class CreateSensorReadingsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self,request):
         data = request.data
-        serializer = CreateSNReadingsSerializer(data=data)
+        serializer : Any | None = None
+        sensor_type = request.headers.get('SensorType')
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response({**serializer.data},status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        print(sensor_type)
+
+        if sensor_type == 'soil_moisture':
+            print('hhehehehehehehe')
+            serializer = CreateSMReadingsSerializer(data = data)
+
+        if serializer:
+            if serializer.is_valid():
+                serializer.save()
+                return Response({**serializer.data},status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
 
