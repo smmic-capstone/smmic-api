@@ -70,7 +70,7 @@ class SinkNode(models.Model):
     SK_Name = models.CharField(max_length=100, blank=True, null=True)
     increment_id = models.IntegerField(editable=False, unique=True)  # Custom auto-increment field
     User = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    area_address = models.TextField()
+    #area_address = models.TextField()
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -88,10 +88,6 @@ class SinkNode(models.Model):
 
     def __str__(self):
         return self.SK_Name
-
-         
-        
-
 
 class SensorNode(models.Model):
      SNID = models.UUIDField(primary_key = True,default = uuid.uuid4,editable = False)
@@ -117,8 +113,15 @@ class SensorNode(models.Model):
 
 class SKReadings(models.Model):
      Sink_Node = models.ForeignKey(SinkNode,on_delete=models.CASCADE)
-     battery_level = models.DecimalField(max_digits=10, decimal_places=7)
      timestamp = models.DateTimeField(auto_now_add=False)
+     battery_level = models.DecimalField(max_digits=10, decimal_places=7)
+     connected_clients = models.IntegerField()
+     total_clients = models.IntegerField()
+     sub_count = models.IntegerField()
+     bytes_sent = models.IntegerField()
+     bytes_received = models.IntegerField()
+     messages_sent = models.IntegerField()
+     messages_received = models.IntegerField()
 
 class SMSensorReadings(models.Model):
      Sensor_Node = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
