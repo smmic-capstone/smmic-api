@@ -50,7 +50,7 @@ class UpdateSNNameSerializer(serializers.ModelSerializer):
 class GetSKReadingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SKReadings
-        fields = ['battery_level','timestamp',]
+        fields = ['battery_level','timestamp', 'connected_clients', 'total_clients', 'sub_count', 'bytes_sent', 'bytes_received', 'messages_sent', 'messages_received']
 
 class GetSMReadingsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,7 +65,7 @@ class CreateSMReadingsSerializer(serializers.ModelSerializer):
 class CreateSKReadingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SKReadings
-        fields = '__all__'
+        fields = ['Sink_Node', 'battery_level','timestamp', 'connected_clients', 'total_clients', 'sub_count', 'bytes_sent', 'bytes_received', 'messages_sent', 'messages_received']
 
 class TestingforRaspiSerializer(serializers.ModelSerializer):
     class Meta:

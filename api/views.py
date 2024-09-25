@@ -173,7 +173,6 @@ class CreateSKReadingsView(APIView):
     def post(self,request):
         data = request.data
         serializer = CreateSKReadingsSerializer(data=data)
-
         if serializer.is_valid():
             serializer.save()
             return Response({**serializer.data},status=status.HTTP_200_OK)
@@ -191,7 +190,7 @@ class CreateSensorReadingsView(APIView):
         if sensor_type == 'soil_moisture':
             serializer = CreateSMReadingsSerializer(data = data)
         else:
-            return Response(data=f"Unregistered sensor type: {request.data}", status=status.HTTP_400_BAD_REQUEST)
+            return Response(f'Unregistered sensor type: {request.data}', status=status.HTTP_400_BAD_REQUEST)
 
         if serializer:
             if serializer.is_valid():
