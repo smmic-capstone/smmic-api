@@ -47,20 +47,30 @@ AUTH_USER_MODEL = "api.CustomUser"
 
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
+    'daphne',
+    'channels',
     'api.apps.ApiConfig',
     'rest_framework',
     'corsheaders',
     'djoser',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework.authtoken',
+
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
 ]
+
+ASGI_APPLICATION = 'SMMIC.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND' : 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 REST_FRAMEWORK={
     'DEFAULT_PERMISSION_CLASSES': (
