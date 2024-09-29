@@ -7,6 +7,8 @@ from .models import *
 from.serializers import *
 from django.shortcuts import get_object_or_404
 from typing import Any
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 # Create your views here.
 
 #BlackList and Refresh Token
@@ -195,6 +197,16 @@ class CreateSensorReadingsView(APIView):
         if serializer:
             if serializer.is_valid():
                 serializer.save()
+                
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    "sensor_readings",
+                    {
+                        'type' : 'sensor_reading_message',
+                        'message' : serializer.data
+                    }
+                )
+
                 return Response({**serializer.data},status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
