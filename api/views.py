@@ -177,6 +177,15 @@ class CreateSKReadingsView(APIView):
         serializer = CreateSKReadingsSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "sink_readings",
+                {
+                    'type' : 'sink_reading_messages',
+                    'message' : serializer.data 
+                }
+            )
             return Response({**serializer.data},status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)

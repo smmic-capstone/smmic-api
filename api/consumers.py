@@ -2,12 +2,6 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from uuid import UUID
 
-class UUIDEncoder(json.JSONEncoder):
-    def default(self,obj):
-        if isinstance(obj,UUID):
-            return obj.hex
-        return json.JSONEncoder.default(self,obj)
-
 class SMReadingsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.channel_layer.group_add("sensor_readings",self.channel_name)
@@ -38,3 +32,32 @@ class SMReadingsConsumer(AsyncWebsocketConsumer):
             'message' : message
         }))
 
+class SKReadingsConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.channel_layer.group_add("sink_readings",self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard("sink_readings",self.channel_name)
+
+    async def recieve(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        
+        await self.channel_layer.group_send(
+            "sink_readings",
+            {
+                'type' : 'sink_reading_messages',
+                'message' : message
+            }
+        )
+    
+    async def sink_reading_messages(self,event):
+        message = event['message']
+
+        if 'Sink_Node' in message:
+            message['Sink_Node']  = str(message['Sink_Node'])
+
+        await self.send(text_data=json.dumps ({
+            'message' : message
+        }))
