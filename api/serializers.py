@@ -67,10 +67,17 @@ class CreateSKReadingsSerializer(serializers.ModelSerializer):
         model = SKReadings
         fields = ['Sink_Node', 'battery_level','timestamp', 'connected_clients', 'total_clients', 'sub_count', 'bytes_sent', 'bytes_received', 'messages_sent', 'messages_received']
 
+class SensorNodeAlertsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SensorNodeAlerts
+        fields = '__all__'
+        
 class TestingforRaspiSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ['first_name',]
+
+
 
 
 

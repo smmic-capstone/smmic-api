@@ -135,11 +135,25 @@ class SMSensorReadings(models.Model):
      #other attributes
 
 
-class Notifications(models.Model):
+class SensorNodeAlerts(models.Model):
      #subject to change
-     timestamp = models.DateTimeField(auto_now_add=False)
-     type = models.TextField()
-     message = models.TextField()
+     deviceId = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
+     timestamp = models.DateTimeField(auto_now_add=True)
+     type = models.SmallIntegerField()
+     #code for types
+     #Disconnected = 0
+     #Connected = 1 
+     #High Temp Alert = 20
+     #Enough Temp Alert =  21
+     #Low Temp Alert = 22
+     #High Humidity = 30
+     #Enough Humidity = 31
+     #Low Humidty = 32 
+     #Low Moisture = 40
+     #Enough Soil Moisture = 41
+
+class SinkNodeAlerts(models.Model):
+     deviceID = models.ForeignKey(SinkNode,on_delete=models.CASCADE)
 
 
 

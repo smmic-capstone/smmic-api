@@ -220,8 +220,19 @@ class CreateSensorReadingsView(APIView):
             else:
                 return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
+class SensorNodeAlertsViews(APIView):
+    permission_classes = (permissions.AllowAny,)
 
+    def post(self, request):
+        data = request.data
+        serializer = SensorNodeAlertsSerializer(data = data)
 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 #kuha ug latest nga isa kabook
 #kuha ug data from latest to 15th nga latest
 #butang ug post data nila SK ug Sensor
@@ -243,4 +254,4 @@ class TestingforRaspiViews(APIView):
         serializer = TestingforRaspiSerializer(user)
 
         return Response(serializer.data)
-        
+    
