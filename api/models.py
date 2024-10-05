@@ -126,7 +126,7 @@ class SKReadings(models.Model):
 class SMSensorReadings(models.Model):
      Sensor_Node = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
      battery_level = models.DecimalField(max_digits=10, decimal_places=7)
-     timestamp = models.DateTimeField(auto_now_add=True)
+     timestamp = models.DateTimeField(auto_now_add=False)
      soil_moisture = models.DecimalField(max_digits=10, decimal_places=7)
      temperature = models.DecimalField(max_digits=10, decimal_places=7)
      humidity = models.DecimalField(max_digits=10, decimal_places=7)
@@ -135,7 +135,25 @@ class SMSensorReadings(models.Model):
      #other attributes
 
 
+class SensorNodeAlerts(models.Model):
+     #subject to change
+     deviceId = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
+     timestamp = models.DateTimeField(auto_now_add=True)
+     type = models.SmallIntegerField()
+     #code for types
+     #Disconnected = 0
+     #Connected = 1 
+     #High Temp Alert = 20
+     #Enough Temp Alert =  21
+     #Low Temp Alert = 22
+     #High Humidity = 30
+     #Enough Humidity = 31
+     #Low Humidty = 32 
+     #Low Moisture = 40
+     #Enough Soil Moisture = 41
 
+class SinkNodeAlerts(models.Model):
+     deviceID = models.ForeignKey(SinkNode,on_delete=models.CASCADE)
 
 
 

@@ -17,5 +17,6 @@ urlpatterns =[
     path('createSensorReadings/',views.CreateSensorReadingsView.as_view(),name='createSNreadings'),
     path('createSKreadings/',views.CreateSKReadingsView.as_view(),name='createSKreadings'),
     path('raspiTesting/',views.TestingforRaspiViews.as_view(),name='raspiTesting'),
+    path('SNAlerts/', views.SensorNodeAlertsViews.as_view(),name = 'SNalerts'),
     path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist')
 ]
