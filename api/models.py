@@ -134,13 +134,32 @@ class SMSensorReadings(models.Model):
 #class AirQualitySensor(models.Model):
      #other attributes
 
+class SensorNodeAlertCodes:
+     # connection
+     CONNECTED = 1
+     DISCONNECTED = 0
+
+     # soil moisture
+     HIGH_SOIL_MOISTURE = 40
+     NORMAL_SOIL_MOISTURE = 41
+     LOW_SOIL_MOISTURE = 42
+
+     # humidity
+     HIGH_HUMIDITY = 20
+     NORMAL_HUMIDITY = 21
+     LOW_HUMIDITY = 22
+
+     # soil moisture
+     HIGH_SOIL_MOISTURE = 40
+     NORMAL_SOIL_MOISTURE = 40
+     LOW_SOIL_MOISTURE = 41
 
 class SensorNodeAlerts(models.Model):
      #subject to change
-     deviceId = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
+     device_id = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
      timestamp = models.DateTimeField(auto_now_add=True)
-     type = models.SmallIntegerField()
-     #code for types
+     alert_code = models.SmallIntegerField()
+     #code for alertCodes
      #Disconnected = 0
      #Connected = 1 
      #High Temp Alert = 20

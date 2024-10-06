@@ -255,3 +255,8 @@ class TestingforRaspiViews(APIView):
 
         return Response(serializer.data)
     
+class HealthCheck(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        return Response({"status":"OK"}, status=status.HTTP_200_OK)
