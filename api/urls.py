@@ -18,5 +18,6 @@ urlpatterns =[
     path('createSKreadings/',views.CreateSKReadingsView.as_view(),name='createSKreadings'),
     path('raspiTesting/',views.TestingforRaspiViews.as_view(),name='raspiTesting'),
     path('SNAlerts/', views.SensorNodeAlertsViews.as_view(),name = 'SNalerts'),
-    path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist')
+    path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist'),
+    path('health/', views.HealthCheck.as_view(), name='healthCheck')
 ]
