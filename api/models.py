@@ -95,7 +95,6 @@ class SensorNode(models.Model):
      longitude = models.DecimalField(max_digits=9, decimal_places=6)
      increment_id = models.IntegerField(editable=False, unique=False)
      
-
      def save(self,*args,**kwargs):
           if not self.increment_id:
                last_increment_id = SensorNode.objects.filter(SinkNode = self.sink_node).aggregate(models.Max("increment_id"))['increment_id__max']

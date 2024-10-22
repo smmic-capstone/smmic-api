@@ -25,25 +25,25 @@ class UpdateUserDetailsSerializer(serializers.ModelSerializer):
 class GetUserSNDeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorNode
-        fields = ["SNID","SensorNode_Name","latitude","longitude"]
+        fields = ["device_id","name","latitude","longitude"]
         
 class GetUserSKDeviceSerializer(serializers.ModelSerializer):
     sensor_nodes = GetUserSNDeviceSerializer(many=True,read_only=True)
 
     class Meta:
         model = SinkNode
-        fields = ["SKID","SK_Name","sensor_nodes","latitude","longitude"]
+        fields = ["device_id","name","sensor_nodes","latitude","longitude"]
 
 #Update Device Name
 class UpdateSKNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = SinkNode
-        fields= ['SK_Name',"latitude","longitude"]
+        fields= ['name',"latitude","longitude"]
 
 class UpdateSNNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorNode
-        fields = ['SensorNode_Name',"latitude","longitude"]
+        fields = ['name',"latitude","longitude"]
 
 
 #Readings
@@ -65,7 +65,7 @@ class CreateSMReadingsSerializer(serializers.ModelSerializer):
 class CreateSKReadingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SKReadings
-        fields = ['Sink_Node', 'battery_level','timestamp', 'connected_clients', 'total_clients', 'sub_count', 'bytes_sent', 'bytes_received', 'messages_sent', 'messages_received']
+        fields = ['device_id', 'battery_level','timestamp', 'connected_clients', 'total_clients', 'sub_count', 'bytes_sent', 'bytes_received', 'messages_sent', 'messages_received']
 
 class SensorNodeAlertsSerializer(serializers.ModelSerializer):
     class Meta:
