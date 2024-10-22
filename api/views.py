@@ -74,8 +74,8 @@ class UpdateSKNameView(APIView):
         if not SK_ID:
             return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
-        Sink_Node = SinkNode.objects.get(SKID = SK_ID)
-        serializer = UpdateSKNameSerializer(Sink_Node, data=data)
+        sink_node = SinkNode.objects.get(device_id = SK_ID)
+        serializer = UpdateSKNameSerializer(sink_node, data=data)
 
         if serializer.is_valid():
             serializer.save()
@@ -94,7 +94,7 @@ class UpdateSNNameView(APIView):
         if not SN_ID:
             return Response({'error':'Sensor Node ID required'},status=status.HTTP_400_BAD_REQUEST)
         
-        sensor_node = SensorNode.objects.get(SNID = SN_ID)
+        sensor_node = SensorNode.objects.get(device_id = SN_ID)
         serializer = UpdateSNNameSerializer(sensor_node, data = data)
 
         if serializer.is_valid():
@@ -115,8 +115,8 @@ class GetSKReadingViews(APIView):
         if not sink_node_id:
             return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
-        sink_node = get_object_or_404(SinkNode,SKID = sink_node_id)
-        readings = SKReadings.objects.filter(Sink_Node = sink_node).order_by('-timestamp')[:1]
+        sink_node = get_object_or_404(SinkNode,device_id = sink_node_id)
+        readings = SKReadings.objects.filter(device_id = sink_node).order_by('-timestamp')[:1]
 
         serializer = GetSKReadingsSerializer(readings,many = True)
         return Response(serializer.data)
@@ -131,8 +131,8 @@ class GetSNReadingView(APIView):
         if not sensor_node_id:
             return Response({'error':'Sensor Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
-        sensor_node = get_object_or_404(SensorNode,SNID = sensor_node_id)
-        readings = SMSensorReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:1]
+        sensor_node = get_object_or_404(SensorNode,device_id = sensor_node_id)
+        readings = SMSensorReadings.objects.filter(device_id = sensor_node).order_by('-timestamp')[:1]
 
         serializer = GetSMReadingsSerializer(readings, many=True)
         return Response(serializer.data)
@@ -148,8 +148,8 @@ class GetSKReadingsViews(APIView):
         if not sink_node_id:
             return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
-        sink_node = get_object_or_404(SinkNode,SKID = sink_node_id)
-        readings = SKReadings.objects.filter(Sink_Node = sink_node).order_by('-timestamp')[:15]
+        sink_node = get_object_or_404(SinkNode, device_id = sink_node_id)
+        readings = SKReadings.objects.filter(device_id = sink_node).order_by('-timestamp')[:15]
 
         serializer = GetSKReadingsSerializer(readings,many = True)
         return Response(serializer.data)
@@ -163,8 +163,8 @@ class GetSMReadingsView(APIView):
         if not sensor_node_id:
             return Response({'error':'Sensor Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
-        sensor_node = get_object_or_404(SensorNode,SNID = sensor_node_id)
-        readings = SMSensorReadings.objects.filter(Sensor_Node = sensor_node).order_by('-timestamp')[:15]
+        sensor_node = get_object_or_404(SensorNode, device_id = sensor_node_id)
+        readings = SMSensorReadings.objects.filter(device_id = sensor_node).order_by('-timestamp')[:15]
 
         serializer = GetSMReadingsSerializer(readings, many=True)
         return Response(serializer.data)
@@ -188,13 +188,13 @@ class CreateSKReadingsView(APIView):
             )
             return Response({**serializer.data},status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class CreateSensorReadingsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        sensor_type = request.data.get('SensorType')
+        sensor_type = request.data.get('sensor_type')
         data = request.data
         serializer : Any | None = None
 
