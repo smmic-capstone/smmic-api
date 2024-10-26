@@ -25,8 +25,8 @@ class SMReadingsConsumer(AsyncWebsocketConsumer):
     async def sensor_reading_message(self,event):
         message = event['message']
 
-        if 'Sensor_Node' in message:
-            message['Sensor_Node'] = str(message['Sensor_Node'])
+        if 'device_id' in message:
+            message['device_id'] = str(message['device_id'])
 
         await self.send(text_data = json.dumps ({
             'message' : message
@@ -55,8 +55,8 @@ class SKReadingsConsumer(AsyncWebsocketConsumer):
     async def sink_reading_messages(self,event):
         message = event['message']
 
-        if 'Sink_Node' in message:
-            message['Sink_Node']  = str(message['Sink_Node'])
+        if 'device_id' in message:
+            message['device_id']  = str(message['device_id'])
 
         await self.send(text_data=json.dumps ({
             'message' : message
