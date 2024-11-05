@@ -206,7 +206,7 @@ class CreateSensorReadingsView(APIView):
         if serializer:
             if serializer.is_valid():
                 serializer.save()
-                
+
                 channel_layer = get_channel_layer()
                 async_to_sync(channel_layer.group_send)(
                     "sensor_readings",
@@ -220,15 +220,31 @@ class CreateSensorReadingsView(APIView):
             else:
                 return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-class SensorNodeAlertsViews(APIView):
+class SMSensorAlertsView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         data = request.data
-        serializer = SensorNodeAlertsSerializer(data = data)
+        sensor_type = request.data.get('sensor_type')
+        serializer : Any | None = None
+
+        if sensor_type == 'soil_moisture':
+            serializer = SMSensorAlertsSerializer(data = data)
+        else:
+            return Response(f'Unregistered sensor type: {request.data}', status=status.HTTP_400_BAD_REQUEST)
 
         if serializer.is_valid():
             serializer.save()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "sm_alerts",
+                {
+                    'type':'sm_alerts_message',
+                    'message':serializer.data
+                }
+            )
+            
             return Response(serializer.data, status = status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -260,3 +276,5 @@ class HealthCheck(APIView):
 
     def get(self, request):
         return Response({"status":"OK"}, status=status.HTTP_200_OK)
+    
+        
