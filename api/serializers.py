@@ -67,10 +67,11 @@ class CreateSKReadingsSerializer(serializers.ModelSerializer):
         model = SKReadings
         fields = ['device_id', 'battery_level','timestamp', 'connected_clients', 'total_clients', 'sub_count', 'bytes_sent', 'bytes_received', 'messages_sent', 'messages_received']
 
-class SensorNodeAlertsSerializer(serializers.ModelSerializer):
+class SMSensorAlertsSerializer(serializers.ModelSerializer):
+    data = serializers.JSONField()
     class Meta:
-        model = SensorNodeAlerts
-        fields = '__all__'
+        model = SMSensorAlerts
+        fields = ['device_id','timestamp','alert_code','data']
         
 class TestingforRaspiSerializer(serializers.ModelSerializer):
     class Meta:

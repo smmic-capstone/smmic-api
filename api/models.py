@@ -136,11 +136,6 @@ class SensorNodeAlertCodes:
      CONNECTED = 1
      DISCONNECTED = 0
 
-     # soil moisture
-     HIGH_SOIL_MOISTURE = 40
-     NORMAL_SOIL_MOISTURE = 41
-     LOW_SOIL_MOISTURE = 42
-
      # humidity
      HIGH_HUMIDITY = 20
      NORMAL_HUMIDITY = 21
@@ -148,25 +143,21 @@ class SensorNodeAlertCodes:
 
      # soil moisture
      HIGH_SOIL_MOISTURE = 40
-     NORMAL_SOIL_MOISTURE = 40
-     LOW_SOIL_MOISTURE = 41
+     NORMAL_SOIL_MOISTURE = 41
+     LOW_SOIL_MOISTURE = 42
 
-class SensorNodeAlerts(models.Model):
-     #subject to change
+     # temperature
+     HIGH_TEMPERATURE = 30
+     NORMAL_TEMPERATURE = 31
+     LOW_TEMPERATURE = 32
+
+class SMSensorAlerts(models.Model):
      device_id = models.ForeignKey(SensorNode,on_delete=models.CASCADE)
      timestamp = models.DateTimeField(auto_now_add=True)
-     alert_code = models.SmallIntegerField()
-     #code for alertCodes
-     #Disconnected = 0
-     #Connected = 1 
-     #High Temp Alert = 20
-     #Enough Temp Alert =  21
-     #Low Temp Alert = 22
-     #High Humidity = 30
-     #Enough Humidity = 31
-     #Low Humidty = 32 
-     #Low Moisture = 40
-     #Enough Soil Moisture = 41
+     alert_code = models.PositiveSmallIntegerField()
+     data = models.JSONField(default=dict)
+
+
 
 class SinkNodeAlerts(models.Model):
      device_id = models.ForeignKey(SinkNode,on_delete=models.CASCADE)
