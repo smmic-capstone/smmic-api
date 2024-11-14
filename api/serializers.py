@@ -34,16 +34,17 @@ class GetUserSKDeviceSerializer(serializers.ModelSerializer):
         model = SinkNode
         fields = ["device_id","name","sensor_nodes","latitude","longitude"]
 
-#Update Device Name
-class UpdateSKNameSerializer(serializers.ModelSerializer):
+
+#Update Device Details
+class UpdateSKDeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SinkNode
-        fields= ['name',"latitude","longitude"]
+        fields= ["name","User","latitude","longitude"]
 
-class UpdateSNNameSerializer(serializers.ModelSerializer):
+class UpdateSNDeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SensorNode
-        fields = ['name',"latitude","longitude"]
+        fields = ["name","sink_node","latitude","longitude"]
 
 
 #Readings

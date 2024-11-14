@@ -9,6 +9,9 @@ from django.shortcuts import get_object_or_404
 from typing import Any
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from fcm_django.models import FCMDevice
+from firebase_admin.messaging import Message, Notification
+from .tasks import *
 # Create your views here.
 
 #BlackList and Refresh Token
@@ -24,7 +27,7 @@ class LogoutAndBlacklistRefreshTokenForUserView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT, data={"refresh_token":refresh_token, "blacklisted":True})
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
+        
 #User Update Details
 class UpdateUserDetailsView(APIView):
     permission_classes = (permissions.IsAuthenticated,) #Debug
@@ -41,9 +44,12 @@ class UpdateUserDetailsView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+
+            return Response(serializer.data,status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+#Create
 
 
 #Get All Devices on User
@@ -75,7 +81,7 @@ class UpdateSKNameView(APIView):
             return Response({'error':'Sink Node ID is required'},status=status.HTTP_400_BAD_REQUEST)
         
         sink_node = SinkNode.objects.get(device_id = SK_ID)
-        serializer = UpdateSKNameSerializer(sink_node, data=data)
+        serializer = UpdateSKDeviceSerializer(sink_node, data=data)
 
         if serializer.is_valid():
             serializer.save()
@@ -95,7 +101,7 @@ class UpdateSNNameView(APIView):
             return Response({'error':'Sensor Node ID required'},status=status.HTTP_400_BAD_REQUEST)
         
         sensor_node = SensorNode.objects.get(device_id = SN_ID)
-        serializer = UpdateSNNameSerializer(sensor_node, data = data)
+        serializer = UpdateSNDeviceSerializer(sensor_node, data = data)
 
         if serializer.is_valid():
             serializer.save()
@@ -234,7 +240,11 @@ class SMSensorAlertsView(APIView):
             return Response(f'Unregistered sensor type: {request.data}', status=status.HTTP_400_BAD_REQUEST)
 
         if serializer.is_valid():
+
             serializer.save()
+
+            device_id = serializer.data['device_id']
+            send_notifications(device_id=device_id)
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
