@@ -2,6 +2,7 @@ from django.urls import path,include
 from . import views
 from djoser import views as djoser_views
 from rest_framework_simplejwt.views import TokenRefreshView
+from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 
 urlpatterns = [
     path('djoser/',include('djoser.urls')),
@@ -19,5 +20,7 @@ urlpatterns = [
     path('raspiTesting/',views.TestingforRaspiViews.as_view(),name='raspiTesting'),
     path('SNAlerts/', views.SMSensorAlertsView.as_view(),name = 'SNalerts'),
     path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist'),
-    path('health/', views.HealthCheck.as_view(), name='healthCheck')
+    path('health/', views.HealthCheck.as_view(), name='healthCheck'),
+
+    path('devices/', FCMDeviceAuthorizedViewSet.as_view({'post':'create'}), name='create_fcm_device')
 ]

@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import datetime, timedelta
+from firebase_admin import initialize_app, credentials
+from google.auth import load_credentials_from_file
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +34,8 @@ ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_CREDENTIALS = True
+
+CELERY_BROKER_URL = 'redis://192.168.1.8:8000/'
 
 CORS_ALLOW_HEADERS = [
     'content-type',
@@ -55,6 +60,7 @@ INSTALLED_APPS = [
     'djoser',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework.authtoken',
+    'fcm_django',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -92,7 +98,7 @@ DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL" : 'password/reset/confirm/{uid},{token}',
     "USERNAME_RESET_CONFIRM_URL" : 'email/reset/confirm/{uid},{token}',
     "ACTIVATION_URL" : 'activate/{uid}/{token}',
-    "SEND_ACTIVATION_EMAIL" : True,
+    "SEND_ACTIVATION_EMAIL" : False,
     'SERIALIZERS': {
         'current_user':'api.serializers.CustomUserSerializer',
         'user_create': 'api.serializers.UserCreateSerializer',
@@ -213,3 +219,43 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR /'smmic-notifications-firebase-adminsdk-9j7yh-675d9d7b0d.json')
+
+
+
+class CustomFirebaseCredentials(credentials.ApplicationDefault):
+    def __init__(self, account_file_path: str):
+        super().__init__()
+        self._account_file_path = account_file_path
+
+    def _load_credential(self):
+        if not self._g_credential:
+            self._g_credential, self._project_id = load_credentials_from_file(self._account_file_path, scopes=credentials._scopes)
+
+
+FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR , 'smmic-project-firebase-adminsdk-vatd1-b88284beca.json')
+
+     
+custom_credentials = CustomFirebaseCredentials(FIREBASE_CREDENTIALS_PATH)
+
+
+
+FIREBASE_MESSAGING_APP = initialize_app(custom_credentials, name='messaging')
+
+FCM_DJANGO_SETTINGS = {
+     # an instance of firebase_admin.App to be used as default for all fcm-django requests
+     # default: None (the default Firebase app)
+    "DEFAULT_FIREBASE_APP": FIREBASE_MESSAGING_APP,
+     # default: _('FCM Django')
+    "APP_VERBOSE_NAME": "FCM Devices",
+     # true if you want to have only one active device per registered user at a time
+     # default: False
+    "ONE_DEVICE_PER_USER": False,
+     # devices to which notifications cannot be sent,
+     # are deleted upon receiving error response from FCM
+     # default: False
+    "DELETE_INACTIVE_DEVICES": False,
+}
+
+

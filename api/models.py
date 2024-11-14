@@ -2,6 +2,7 @@ from django.db import models, transaction
 from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
 import uuid
+
 class AppUserManager(BaseUserManager):
     def create_user(self, first_name, last_name, province, city, barangay, zone, zip_code, email, password=None):
             if not email:
@@ -67,10 +68,10 @@ class SinkNode(models.Model):
     device_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, blank=True, null=True)
     increment_id = models.IntegerField(editable=False, unique=True)  # Custom auto-increment field
-    User = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    User = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
     #area_address = models.TextField()
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null= True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null= True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     #For adding numbers if devcice has no name
@@ -89,24 +90,34 @@ class SinkNode(models.Model):
 
 class SensorNode(models.Model):
      device_id = models.UUIDField(primary_key = True,default = uuid.uuid4,editable = False)
-     sink_node = models.ForeignKey(SinkNode,on_delete= models.CASCADE, related_name='sensor_nodes')
+     sink_node = models.ForeignKey(SinkNode,on_delete= models.CASCADE, related_name='sensor_nodes', blank=True, null=True)
      name = models.CharField(max_length=100,blank= True, null=True)
-     latitude = models.DecimalField(max_digits=9, decimal_places=6)
-     longitude = models.DecimalField(max_digits=9, decimal_places=6)
+     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null=True)
+     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null=True)
      increment_id = models.IntegerField(editable=False, unique=False)
-     
-     def save(self,*args,**kwargs):
-          if not self.increment_id:
-               last_increment_id = SensorNode.objects.filter(SinkNode = self.sink_node).aggregate(models.Max("increment_id"))['increment_id__max']
-               self.increment_id = (last_increment_id or 0) + 1
-        
-          if not self.name:
-               self.name = f"Sensor Node{self.increment_id}"
 
-          super(SensorNode, self).save(*args, **kwargs)
+     def save(self, *args, **kwargs):
+        if not self.increment_id:
+            last_increment_id = SensorNode.objects.all().aggregate(models.Max('increment_id'))['increment_id__max']
+            self.increment_id = (last_increment_id or 0) + 1
+        
+        if not self.name:
+            self.name = f"sn_{self.increment_id}"
+        
+        super(SensorNode, self).save(*args, **kwargs)
+     
+     # def save(self,*args,**kwargs):
+     #      if not self.increment_id:
+     #           last_increment_id = SensorNode.objects.filter(SinkNode = self.sink_node).aggregate(models.Max("increment_id"))['increment_id__max']
+     #           self.increment_id = (last_increment_id or 0) + 1
+        
+     #      if not self.name:
+     #           self.name = f"Sensor Node{self.increment_id}"
+
+     #      super(SensorNode, self).save(*args, **kwargs)
 
      def __str__(self):
-          return f"{self.sink_node.name} - {self.name}"     
+          return f"{self.name}"     
 
 class SKReadings(models.Model):
      device_id = models.ForeignKey(SinkNode,on_delete=models.CASCADE)
