@@ -73,6 +73,7 @@ class SinkNode(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null= True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null= True)
     created_at = models.DateTimeField(auto_now_add=True)
+    registered = models.BooleanField(default=0)
 
     #For adding numbers if devcice has no name
     def save(self, *args, **kwargs):
@@ -95,6 +96,7 @@ class SensorNode(models.Model):
      latitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null=True)
      longitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null=True)
      increment_id = models.IntegerField(editable=False, unique=False)
+     registered = models.BooleanField(default=0)
 
      def save(self, *args, **kwargs):
         if not self.increment_id:

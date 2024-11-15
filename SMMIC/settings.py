@@ -259,3 +259,9 @@ FCM_DJANGO_SETTINGS = {
 }
 
 
+"smmicproject"
+
+"Database host address:GoEasyonMe.mysql.pythonanywhere-services.com"
+"Username:GoEasyonMe"
+"smmicDB"
+"smmicDBproject"
