@@ -12,7 +12,16 @@ from channels.layers import get_channel_layer
 from fcm_django.models import FCMDevice
 from firebase_admin.messaging import Message, Notification
 from .tasks import *
+import pusher
+import json
 # Create your views here.
+pusher_client = pusher.Pusher(
+    app_id="1897218",
+    key="d0f649dd91498f8916b8",
+    secret = "0b36637c07e16532abc9",
+    cluster = "ap3",
+    ssl=True
+)
 
 #BlackList and Refresh Token
 class LogoutAndBlacklistRefreshTokenForUserView(APIView):
@@ -183,6 +192,18 @@ class CreateSKReadingsView(APIView):
         serializer = CreateSKReadingsSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            message = serializer.data
+
+            if 'device_id' in  message:
+                message['device_id'] = str(message['device_id'])
+
+            pusher_client.trigger(
+                channels= 'sink_readings',
+                event_name= 'sink_reading_message',
+                data = json.dumps({
+                    'message' : message
+                })
+            )
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
@@ -203,23 +224,27 @@ class CreateSensorReadingsView(APIView):
         sensor_type = request.data.get('sensor_type')
         data = request.data
         serializer : Any | None = None
-
+        
         if sensor_type == 'soil_moisture':
             serializer = CreateSMReadingsSerializer(data = data)
         else:
             return Response(f'Unregistered sensor type: {request.data}', status=status.HTTP_400_BAD_REQUEST)
-
+        
+    
         if serializer:
             if serializer.is_valid():
                 serializer.save()
 
-                channel_layer = get_channel_layer()
-                async_to_sync(channel_layer.group_send)(
-                    "sensor_readings",
-                    {
-                        'type' : 'sensor_reading_message',
-                        'message' : serializer.data
-                    }
+                message = serializer.data
+                if 'device_id' in  message:
+                    message['device_id'] = str(message['device_id'])
+
+                pusher_client.trigger(
+                channels= 'sensor_readings',
+                event_name= 'sensor_reading_message',
+                data = json.dumps({
+                    'message' : message
+                    })
                 )
 
                 return Response({**serializer.data},status=status.HTTP_200_OK)
@@ -246,15 +271,19 @@ class SMSensorAlertsView(APIView):
             device_id = serializer.data['device_id']
             send_notifications(device_id=device_id)
 
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                "sm_alerts",
-                {
-                    'type':'sm_alerts_message',
-                    'message':serializer.data
-                }
-            )
+            message = serializer.data
+            if 'device_id' in  message:
+                    message['device_id'] = str(message['device_id'])
+
             
+            pusher_client.trigger(
+                channels= 'sensor_alerts',
+                event_name= 'sensor_alerts_message',
+                data = json.dumps({
+                    'message' : message
+                })
+            )
+
             return Response(serializer.data, status = status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

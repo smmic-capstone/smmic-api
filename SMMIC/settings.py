@@ -179,6 +179,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -234,7 +236,7 @@ class CustomFirebaseCredentials(credentials.ApplicationDefault):
             self._g_credential, self._project_id = load_credentials_from_file(self._account_file_path, scopes=credentials._scopes)
 
 
-FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR , 'smmic-project-firebase-adminsdk-vatd1-b88284beca.json')
+FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR , 'smmic-project-firebase-adminsdk-vatd1-e1cdf7d726.json')
 
      
 custom_credentials = CustomFirebaseCredentials(FIREBASE_CREDENTIALS_PATH)
