@@ -128,7 +128,7 @@ class SensorNode(models.Model):
      #      super(SensorNode, self).save(*args, **kwargs)
 
      def __str__(self):
-          return f"{self.name}"     
+          return f"{self.name} - {self.device_id}"     
 
 class SKReadings(models.Model):
      device_id = models.ForeignKey(SinkNode,on_delete=models.CASCADE)

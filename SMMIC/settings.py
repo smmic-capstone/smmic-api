@@ -95,11 +95,12 @@ DJOSER = {
     "SEND_CONFIRMATION_EMAIL" : True,
     "SET_USERNAME_RETYPE" : True,
     "SET_PASSWORD_RETYPE" : True,
-    "PASSWORD_RESET_CONFIRM_URL" : 'password/reset/confirm/{uid},{token}',
-    "USERNAME_RESET_CONFIRM_URL" : 'email/reset/confirm/{uid},{token}',
+    "PASSWORD_RESET_CONFIRM_URL" : 'api/password/reset/confirm/{uid}/{token}',
+    "USERNAME_RESET_CONFIRM_URL" : 'email/reset/confirm/{uid}/{token}',
     "ACTIVATION_URL" : 'activate/{uid}/{token}',
     "SEND_ACTIVATION_EMAIL" : False,
     'SERIALIZERS': {
+        'password_reset_confirm': 'djoser.serializers.PasswordResetConfirmSerializer',
         'current_user':'api.serializers.CustomUserSerializer',
         'user_create': 'api.serializers.UserCreateSerializer',
         'user' : 'api.serializers.UserCreateSerializer',
@@ -110,8 +111,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'ACCESS_TOKEN_LIFETIME' : timedelta(hours =3),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
     'USER_ID_FIELD': 'UID',
     'USER_ID_CLAIM': 'user_id',
 }
@@ -133,7 +134,7 @@ ROOT_URLCONF = 'SMMIC.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -236,7 +237,7 @@ class CustomFirebaseCredentials(credentials.ApplicationDefault):
             self._g_credential, self._project_id = load_credentials_from_file(self._account_file_path, scopes=credentials._scopes)
 
 
-FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR , 'smmic-project-firebase-adminsdk-vatd1-e1cdf7d726.json')
+FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR , 'smmic-project-firebase-adminsdk-vatd1-e16088896d.json')
 
      
 custom_credentials = CustomFirebaseCredentials(FIREBASE_CREDENTIALS_PATH)
@@ -262,7 +263,6 @@ FCM_DJANGO_SETTINGS = {
 
 
 "smmicproject"
-
 "Database host address:GoEasyonMe.mysql.pythonanywhere-services.com"
 "Username:GoEasyonMe"
 "smmicDB"

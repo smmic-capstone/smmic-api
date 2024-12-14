@@ -9,11 +9,12 @@ from django.shortcuts import get_object_or_404
 from typing import Any
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from fcm_django.models import FCMDevice
-from firebase_admin.messaging import Message, Notification
 from .tasks import *
 import pusher
 import json
+from django.contrib.auth.tokens import default_token_generator
+from djoser.serializers import PasswordResetConfirmSerializer
+
 # Create your views here.
 pusher_client = pusher.Pusher(
     app_id="1897218",
@@ -37,6 +38,15 @@ class LogoutAndBlacklistRefreshTokenForUserView(APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
+class PasswordResetConfirmView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    token_generator = default_token_generator
+    
+
+    def get(self, request, uid, token):
+        print(request.data)
+        """Render the password reset form with UID and token embedded in the form."""
+        return render(request, 'email/reset_password_confirm.html', {'uid': uid, 'token': token})
 #User Update Details
 class UpdateUserDetailsView(APIView):
     permission_classes = (permissions.IsAuthenticated,) #Debug
@@ -151,7 +161,7 @@ class GetSNReadingView(APIView):
 
         serializer = GetSMReadingsSerializer(readings, many=True)
         return Response(serializer.data)
-    
+
 class GetSKReadingsViews(APIView):
     permission_classes = (permissions.AllowAny,) #Debug
 
@@ -247,6 +257,20 @@ class CreateSensorReadingsView(APIView):
                     })
                 )
 
+                pusher_client.trigger(
+                channels= 'user_commands',
+                event_name= 'interval',
+                data = {
+                    'message' : 69,
+                    "data" : {
+                        'interval':15
+                    }
+                    
+                    }
+                )
+
+                
+
                 return Response({**serializer.data},status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -269,7 +293,11 @@ class SMSensorAlertsView(APIView):
             serializer.save()
 
             device_id = serializer.data['device_id']
-            send_notifications(device_id=device_id)
+            alert_code = serializer.data['alert_code']
+
+            if(alert_code == 42):
+                soil_moisture = serializer.data['data']['soil_moisture']
+                send_notifications(device_id=device_id, soil_moisture=soil_moisture)
 
             message = serializer.data
             if 'device_id' in  message:
@@ -287,6 +315,29 @@ class SMSensorAlertsView(APIView):
             return Response(serializer.data, status = status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class PusherAuthentication(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    def post(self,request):
+        socket_id = request.data['socket_id']
+        channel_name = request.data['channel_name']
+
+        print(socket_id)
+        print(channel_name)
+
+        try:
+            auth  = pusher_client.authenticate(
+            channel=channel_name,
+            socket_id=socket_id)
+            return Response(json.dumps(auth))
+        except:
+            return Response({"error" : "Invalid Request"},status=status.HTTP_400_BAD_REQUEST)
+
+# get channel name, authorization token and socket id from frontend, and then return auth then what?
+        
+
+        
         
 #kuha ug latest nga isa kabook
 #kuha ug data from latest to 15th nga latest
@@ -315,5 +366,25 @@ class HealthCheck(APIView):
 
     def get(self, request):
         return Response({"status":"OK"}, status=status.HTTP_200_OK)
+    
+
+class GetAllSensorNoAuthView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self,request):
+        date = self.request.query_params.get('date')
+        sensor_node_id = request.headers.get('Sensor')
+        limit = int(request.query_params.get('limit',10))
+
+
+        if not sensor_node_id:
+            return Response({'error' : 'Sensor Node ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        sensor_node = get_object_or_404(SensorNode,device_id = sensor_node_id)
+        readingsByDate = SMSensorReadings.objects.filter(device_id = sensor_node,timestamp__date = date).order_by('-timestamp')[:limit]
+
+        serializer = GetSMReadingsNoAuthSerializer(readingsByDate, many=True)
+
+        return Response(serializer.data)
     
         
