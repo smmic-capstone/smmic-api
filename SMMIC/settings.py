@@ -206,7 +206,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'zujuariojj@gmail.com'
  
 # 'api' 
-EMAIL_HOST_PASSWORD = 'nujj ilvu eccb ilmt'
+EMAIL_HOST_PASSWORD = 'cnqv azpd fmhi gqhs'
 # '6ffe947e099a4a0089644ab9d2fd41de'
 
 EMAIL_USE_TLS = True
