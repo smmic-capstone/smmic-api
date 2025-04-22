@@ -6,6 +6,8 @@ from rest_framework.response import Response
 UserModel = get_user_model()
 
 #User Serializers
+
+
 class UserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = UserModel
@@ -78,6 +80,28 @@ class TestingforRaspiSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ['first_name',]
+
+class GetSMReadingsNoAuthSerializer(serializers.ModelSerializer):
+    remarks = serializers.SerializerMethodField()
+
+
+    class Meta:
+        model = SMSensorReadings
+        fields = ['id','battery_level','timestamp','soil_moisture','temperature','humidity','remarks']
+
+    def get_remarks(self, obj):
+        soil_moisture = obj.soil_moisture
+        temperature = obj.temperature
+        humidity = obj.humidity
+
+        if soil_moisture >= 20 and soil_moisture <= 40:
+            if temperature >=20 or temperature <= 32 or humidity >= 40 or humidity <=55:
+                return "water the plants"
+            else:
+                return "no need to water plants"
+        else:
+            return "no need to water"
+
 
 
 

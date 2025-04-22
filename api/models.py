@@ -25,13 +25,22 @@ class AppUserManager(BaseUserManager):
             user.save()
 
             return user
-    def create_superuser(self, email, password=None):
+    def create_superuser(self, first_name, last_name, province, city, barangay, zone, zip_code, email, password=None):
             if not email:
                 raise ValueError('An email is required.')
             if not password:
                 raise ValueError('A password is required.')
             
-            user = self.create_user(email,password)
+            user = self.create_user(
+                 first_name=first_name, 
+                 last_name=last_name,
+                 province=province, 
+                 city=city, 
+                 barangay=barangay, 
+                 zone=zone, 
+                 zip_code=zip_code,
+                 email=email,
+                 password=password)
 
             user.is_superuser = True
             user.is_staff = True
@@ -73,7 +82,7 @@ class SinkNode(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null= True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null= True)
     created_at = models.DateTimeField(auto_now_add=True)
-    registered = models.BooleanField(default=0)
+    registered = models.BooleanField(default=0,blank=True,null=True)
 
     #For adding numbers if devcice has no name
     def save(self, *args, **kwargs):
@@ -96,7 +105,7 @@ class SensorNode(models.Model):
      latitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null=True)
      longitude = models.DecimalField(max_digits=9, decimal_places=6, blank= True, null=True)
      increment_id = models.IntegerField(editable=False, unique=False)
-     registered = models.BooleanField(default=0)
+     registered = models.BooleanField(default=0,blank=True,null=True)
 
      def save(self, *args, **kwargs):
         if not self.increment_id:
@@ -119,7 +128,7 @@ class SensorNode(models.Model):
      #      super(SensorNode, self).save(*args, **kwargs)
 
      def __str__(self):
-          return f"{self.name}"     
+          return f"{self.name} - {self.device_id}"     
 
 class SKReadings(models.Model):
      device_id = models.ForeignKey(SinkNode,on_delete=models.CASCADE)

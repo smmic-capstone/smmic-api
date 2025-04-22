@@ -7,6 +7,7 @@ from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 urlpatterns = [
     path('djoser/',include('djoser.urls')),
     path('auth/',include('djoser.urls.jwt')),
+    path('password/reset/confirm/<uid>/<token>',views.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
     path('updateuserdetails/',views.UpdateUserDetailsView.as_view(),name='updateuserdetails'),
     path('getuserSKdevices/',views.GetUserSKDeviceView.as_view(),name='userSKDevices'),
     path('updateuserSKdevicesname/',views.UpdateSKNameView.as_view(),name='updateSKname'),
@@ -19,8 +20,10 @@ urlpatterns = [
     path('createSKreadings/',views.CreateSKReadingsView.as_view(),name='createSKreadings'),
     path('raspiTesting/',views.TestingforRaspiViews.as_view(),name='raspiTesting'),
     path('SNAlerts/', views.SMSensorAlertsView.as_view(),name = 'SNalerts'),
+    path('pusher/user-auth/',views.PusherAuthentication.as_view(),name = "PusherAuth"),
     path('blacklist/', views.LogoutAndBlacklistRefreshTokenForUserView.as_view(), name='blacklist'),
     path('health/', views.HealthCheck.as_view(), name='healthCheck'),
+    path('devices/', FCMDeviceAuthorizedViewSet.as_view({'post':'create'}), name='create_fcm_device'),
 
-    path('devices/', FCMDeviceAuthorizedViewSet.as_view({'post':'create'}), name='create_fcm_device')
+    path('get_readings_no_auth/', views.GetAllSensorNoAuthView.as_view(),name='noauthreadings'),
 ]
